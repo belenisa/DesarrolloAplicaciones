@@ -22,37 +22,39 @@ fun Producto() {
     val catalogo = CatalogoCDs()
     val cds = catalogo.mostrarCDs()
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        items(cds) { cd ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                elevation = CardDefaults.cardElevation(4.dp)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Image(
-                        painter = painterResource(id = cd.imageResId),
-                        contentDescription = cd.titulo,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp)
-                    )
-                    Text(
-                        text = "Título: ${cd.titulo}",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(text = "Artista: ${cd.autor}", style = MaterialTheme.typography.bodyMedium)
-                    Text(text = "Año: ${cd.anio}", style = MaterialTheme.typography.bodySmall)
-                    Text(text = "Género: ${cd.genero}", style = MaterialTheme.typography.bodySmall)
-                    Text(
-                        text = "Precio: \$${cd.precio}",
-                        style = MaterialTheme.typography.bodySmall
-                    )
+    Encabezado {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            items(cds) { cd ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    elevation = CardDefaults.cardElevation(4.dp)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Image(
+                            painter = painterResource(id = cd.imageResId),
+                            contentDescription = cd.titulo,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp)
+                        )
+                        Text(
+                            text = "Título: ${cd.titulo}",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(text = "Artista: ${cd.autor}", style = MaterialTheme.typography.bodyMedium)
+                        Text(text = "Año: ${cd.anio}", style = MaterialTheme.typography.bodySmall)
+                        Text(text = "Género: ${cd.genero}", style = MaterialTheme.typography.bodySmall)
+                        Text(
+                            text = "Precio: \$${cd.precio}",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
                 }
             }
         }

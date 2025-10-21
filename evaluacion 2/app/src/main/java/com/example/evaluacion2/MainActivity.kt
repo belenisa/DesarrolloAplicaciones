@@ -1,33 +1,28 @@
 package com.example.evaluacion2
 
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
+
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.evaluacion2.Data.CatalogoCDs
+
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.evaluacion2.Pantallas.Producto
+import com.example.evaluacion2.Pantallas.Encabezado
 import com.example.evaluacion2.ui.theme.Evaluacion2Theme
 
 class MainActivity : ComponentActivity() {
@@ -36,10 +31,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Evaluacion2Theme {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    Encabezado()
-                    Producto()
-                }
+                AppNavigation()
             }
         }
     }
@@ -48,20 +40,39 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun Encabezado() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(150.dp)
-            .padding(15.dp)
-            .background(color = Color(0xFFFFF176)), // amarillo_patito
-        verticalArrangement = Arrangement.Bottom
-    ) {
-        Text(
-            text = stringResource(id = R.string.app_name),
-            color = Color.Black,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
-        )
+fun AppNavigation() {
+    val navController = rememberNavController()
+
+    NavHost(navController = navController, startDestination = "main") {
+        composable("main") {
+            MainScreen(navController)
+        }
+        composable("producto") {
+            Producto()
+        }
+    }
+}
+
+@Composable
+fun MainScreen(navController: NavController) {
+    Encabezado {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Button(onClick = { navController.navigate("producto") }) {
+                Text("Ir a Productos")
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Volver(navController)
+        }
+    }
+}
+
+@Composable
+fun Volver(navController: NavController) {
+    Button(onClick = { navController.navigate("main") }) {
+        Text("🏠")
     }
 }
