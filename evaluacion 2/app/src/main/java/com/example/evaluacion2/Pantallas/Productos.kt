@@ -16,9 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.evaluacion2.Data.CatalogoCDs
+import com.example.evaluacion2.Global.Encabezado
 
 @Composable
-fun Producto() {
+public fun Producto() {
     val catalogo = CatalogoCDs()
     val cds = catalogo.mostrarCDs()
 
@@ -47,9 +48,15 @@ fun Producto() {
                             text = "Título: ${cd.titulo}",
                             style = MaterialTheme.typography.titleMedium
                         )
-                        Text(text = "Artista: ${cd.autor}", style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            text = "Artista: ${cd.autor}",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
                         Text(text = "Año: ${cd.anio}", style = MaterialTheme.typography.bodySmall)
-                        Text(text = "Género: ${cd.genero}", style = MaterialTheme.typography.bodySmall)
+                        Text(
+                            text = "Género: ${cd.genero}",
+                            style = MaterialTheme.typography.bodySmall
+                        )
                         Text(
                             text = "Precio: \$${cd.precio}",
                             style = MaterialTheme.typography.bodySmall

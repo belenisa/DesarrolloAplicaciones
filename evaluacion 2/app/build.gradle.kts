@@ -62,4 +62,6 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.navigation:navigation-compose:2.9.5")
     implementation("androidx.compose.material3:material3:1.2.0")
+    implementation("androidx.compose.animation:animation-android:1.9.3")
+
 }
