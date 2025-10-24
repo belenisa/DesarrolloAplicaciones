@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Yellow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -33,7 +32,7 @@ fun PieDePagina(navController: NavController) {
     ) {
         Inicio(navController)
         Productos(navController)
-        Text("Opción 3", color = Yellow, fontWeight = FontWeight.Bold)
+        Carrito(navController)
         Text("Opción 4", color = Yellow, fontWeight = FontWeight.Bold)
     }
 }
@@ -56,5 +55,15 @@ fun Productos (navController: NavController) {
         colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
     ) {
         Text("CDs", color = Color.Yellow)
+    }
+}
+
+@Composable
+fun Carrito (navController: NavController) {
+    Button(
+        onClick = { navController.navigate("carrito") },
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+    ) {
+        Text("\uD83D\uDED2", color = Color.Yellow)
     }
 }

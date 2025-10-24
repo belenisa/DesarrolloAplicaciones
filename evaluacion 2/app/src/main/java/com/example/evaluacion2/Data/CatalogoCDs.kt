@@ -22,3 +22,4 @@ class CatalogoCDs {
 
     fun mostrarCDs(): List<CD> = listaCDs
 }
+
