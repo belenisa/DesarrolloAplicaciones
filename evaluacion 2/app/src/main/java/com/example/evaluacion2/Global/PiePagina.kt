@@ -33,7 +33,7 @@ fun PieDePagina(navController: NavController) {
         Inicio(navController)
         Productos(navController)
         Carrito(navController)
-        Text("Opción 4", color = Yellow, fontWeight = FontWeight.Bold)
+        Text("Contacto", color = Yellow, fontWeight = FontWeight.Bold)
     }
 }
 

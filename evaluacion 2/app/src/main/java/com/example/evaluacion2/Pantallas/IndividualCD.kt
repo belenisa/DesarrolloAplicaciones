@@ -1,5 +1,6 @@
 package com.example.evaluacion2.Pantallas
 
+import android.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -18,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.example.evaluacion2.Data.Comprar
 import com.example.evaluacion2.Modelo.CD
 import com.example.evaluacion2.Modelo.GuardarCompras
@@ -33,8 +35,15 @@ fun IndividualCD(cd: CD, guardarCompras: GuardarCompras) {
         colors = CardDefaults.cardColors(containerColor = Color.Black)
     ) {
         Column {
+
+            val painter = when {
+                cd.imagenUri?.isNotBlank() == true -> rememberAsyncImagePainter(cd.imagenUri)
+                cd.imagenResId != null -> painterResource(id = cd.imagenResId)
+                else -> painterResource(id = R.drawable.ic_menu_gallery) // imagen por defecto
+            }
+
             Image(
-                painter = painterResource(id = cd.imageResId),
+                painter = painter,
                 contentDescription = cd.titulo,
                 modifier = Modifier
                     .fillMaxWidth()
