@@ -17,7 +17,6 @@ interface CDsDao {
     @Query("DELETE FROM productos")
     suspend fun clear()
 
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertarVarios(cds: List<CD>)
 

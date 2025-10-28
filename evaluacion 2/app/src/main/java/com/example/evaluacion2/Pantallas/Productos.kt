@@ -1,11 +1,8 @@
 package com.example.evaluacion2.Pantallas
 
-import android.R
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,11 +27,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.example.evaluacion2.Data.CatalogoCDs
 import com.example.evaluacion2.Data.Comprar
 import com.example.evaluacion2.Modelo.CD
 import com.example.evaluacion2.Modelo.GuardarCompras
-import com.example.evaluacion2.ui.Pantallaformulario.VerFormularioCD
+import com.example.evaluacion2.ui.Pantalla.VerFormularioCD
 
 
 

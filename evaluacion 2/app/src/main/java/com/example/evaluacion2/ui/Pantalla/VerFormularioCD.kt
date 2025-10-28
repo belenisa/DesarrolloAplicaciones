@@ -1,4 +1,4 @@
-package com.example.evaluacion2.ui.Pantallaformulario
+package com.example.evaluacion2.ui.Pantalla
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import com.example.evaluacion2.R
 
 
+
 class VerFormularioCD(private val dao: CDsDao) : ViewModel() {
 
     val productos = dao.getAll()
@@ -20,6 +21,12 @@ class VerFormularioCD(private val dao: CDsDao) : ViewModel() {
             initialValue = emptyList()
         )
 
+    init {
+        viewModelScope.launch {
+            dao.clear() // Limpia la tabla
+            insertarCatalogoInicial() // Inserta los datos iniciales
+        }
+    }
 
     fun agregarCD(
         autor: String,
@@ -44,7 +51,6 @@ class VerFormularioCD(private val dao: CDsDao) : ViewModel() {
             dao.upsert(nuevoCD)
         }
     }
-
 
     fun limpiar() {
         viewModelScope.launch {

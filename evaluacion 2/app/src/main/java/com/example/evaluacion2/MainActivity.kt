@@ -14,8 +14,8 @@ import com.example.evaluacion2.Modelo.DataCD
 
 import com.example.evaluacion2.ui.AppNavigation
 
-import com.example.evaluacion2.ui.Pantallaformulario.VerFormularioCD
-import com.example.evaluacion2.ui.Pantallaformulario.VerFormularioCDFactory
+import com.example.evaluacion2.ui.Pantalla.VerFormularioCD
+import com.example.evaluacion2.ui.Pantalla.VerFormularioCDFactory
 import com.example.evaluacion2.ui.theme.Evaluacion2Theme
 
 
@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             Evaluacion2Theme {
-                AppNavigation(viewModel = viewModel) // ✅ Se pasa el ViewModel
+                AppNavigation(viewModel = viewModel)
             }
 
         }

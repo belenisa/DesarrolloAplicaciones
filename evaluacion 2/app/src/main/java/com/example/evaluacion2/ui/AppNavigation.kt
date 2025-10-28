@@ -25,17 +25,20 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.evaluacion2.Data.CatalogoCDs
 import com.example.evaluacion2.Global.Encabezado
 import com.example.evaluacion2.Global.PieDePagina
+import com.example.evaluacion2.Modelo.CD
 import com.example.evaluacion2.Modelo.DataCD
 import com.example.evaluacion2.Modelo.GuardarCompras
 import com.example.evaluacion2.Pantallas.IndividualCD
 import com.example.evaluacion2.Pantallas.Producto
 import com.example.evaluacion2.Pantallas.VerCarrito
-import com.example.evaluacion2.ui.Pantallaformulario.PantallaProductos
-import com.example.evaluacion2.ui.Pantallaformulario.VerFormularioCD
-import com.example.evaluacion2.ui.Pantallaformulario.VerFormularioCDFactory
+import com.example.evaluacion2.ui.Pantalla.Login
+import com.example.evaluacion2.ui.Pantalla.PantallaProductos
+import com.example.evaluacion2.ui.Pantalla.VerFormularioCD
+import com.example.evaluacion2.ui.Pantalla.VerFormularioCDFactory
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 
@@ -43,9 +46,9 @@ import com.example.evaluacion2.ui.Pantallaformulario.VerFormularioCDFactory
 fun AppNavigation(viewModel: VerFormularioCD, modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val catalogo = CatalogoCDs()
-    val cds = catalogo.mostrarCDs()
     val guardarCompras = remember { GuardarCompras() }
+
+    val cds by viewModel.productos.collectAsState()
 
     val currentBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry.value?.destination?.route
@@ -53,7 +56,7 @@ fun AppNavigation(viewModel: VerFormularioCD, modifier: Modifier = Modifier) {
     Scaffold(
         modifier = modifier.background(Color.Yellow),
         containerColor = Color.Yellow,
-        topBar = { Encabezado(scrollBehavior) },
+        topBar = { Encabezado(navController = navController, scrollBehavior = scrollBehavior) }, // ✅ navController pasado
         bottomBar = { PieDePagina(navController) },
         floatingActionButton = {
             if (currentRoute == "producto") {
@@ -69,11 +72,20 @@ fun AppNavigation(viewModel: VerFormularioCD, modifier: Modifier = Modifier) {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = "main",
+            startDestination = "login",
             modifier = Modifier
                 .padding(innerPadding)
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
         ) {
+            composable("login") {
+                Login(
+                    onLogingClick = { usuario ->
+                        println("Usuario logueado: ${usuario.Nombre}")
+                    },
+                    navController = navController
+                )
+            }
+
             composable("main") {
                 MainScreen(navController, scrollBehavior)
             }
@@ -114,7 +126,8 @@ fun AppNavigation(viewModel: VerFormularioCD, modifier: Modifier = Modifier) {
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+
+            @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavController, scrollBehavior: TopAppBarScrollBehavior) {
     Column(modifier = Modifier
