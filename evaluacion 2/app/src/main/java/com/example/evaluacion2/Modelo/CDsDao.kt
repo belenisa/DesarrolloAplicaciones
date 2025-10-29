@@ -20,4 +20,9 @@ interface CDsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertarVarios(cds: List<CD>)
 
+    // Buscar por título o autor
+
+    @Query("SELECT * FROM productos WHERE titulo LIKE '%' || :query || '%' OR autor LIKE '%' || :query || '%'")
+    fun buscarProductos(query: String): Flow<List<CD>>
+
 }

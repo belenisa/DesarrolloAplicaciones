@@ -33,8 +33,6 @@ import com.example.evaluacion2.Modelo.GuardarCompras
 import com.example.evaluacion2.ui.Pantalla.VerFormularioCD
 
 
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Producto(

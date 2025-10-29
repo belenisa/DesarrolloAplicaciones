@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi
 import com.example.evaluacion2.Modelo.Usuarios
 import java.time.LocalDate
 
+
 @RequiresApi(Build.VERSION_CODES.O)
 class ListaUsuarios {
 
@@ -14,13 +15,33 @@ class ListaUsuarios {
     init {
         listaUsuarios.addAll(
             listOf(
-                Usuarios("JuanitoAD","Juan","Perez","juanperez@gmail.com",
-                    LocalDate.of(1980, 7, 12),"123","Admin"),
-                Usuarios("PedroCl","Pedro","Lopez","pedrolopez@gmail.com",
-                    LocalDate.of(1970,4,4),"123","Cliente")
+                Usuarios(
+                    Usuario = "JuanitoAD",
+                    Nombre = "Juan",
+                    Apellido = "Perez",
+                    correo = "juanperez@gmail.com",
+                    FechaNacimiento = LocalDate.of(1980, 7, 12),
+                    Contraseña = "123",
+                    TipoUsuario = "Admin"
+                ),
+                Usuarios(
+                    Usuario = "PedroCl",
+                    Nombre = "Pedro",
+                    Apellido = "Lopez",
+                    correo = "pedrolopez@gmail.com",
+                    FechaNacimiento = LocalDate.of(1970, 4, 4),
+                    Contraseña = "123",
+                    TipoUsuario = "Cliente"
                 )
+            )
         )
     }
 
-    fun mostrarUsuarios(): List<Usuarios> = listaUsuarios
+    fun obtenerUsuarios(): List<Usuarios> {
+        return listaUsuarios
+    }
+
+    fun agregarUsuario(usuario: Usuarios) {
+        listaUsuarios.add(usuario)
+    }
 }

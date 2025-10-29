@@ -9,7 +9,10 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import com.example.evaluacion2.R
-
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flatMapLatest
 
 
 class VerFormularioCD(private val dao: CDsDao) : ViewModel() {
@@ -20,6 +23,17 @@ class VerFormularioCD(private val dao: CDsDao) : ViewModel() {
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = emptyList()
         )
+
+
+    private val _query = MutableStateFlow("")
+    val resultadosBusqueda: StateFlow<List<CD>> = _query
+        .debounce(300) // espera 300ms antes de buscar
+        .flatMapLatest { query ->
+            dao.buscarProductos(query)
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList()
+        )
+
 
     init {
         viewModelScope.launch {
@@ -72,6 +86,11 @@ class VerFormularioCD(private val dao: CDsDao) : ViewModel() {
             dao.insertarVarios(cdsIniciales)
         }
     }
+
+    fun actualizarBusqueda(nuevoTexto: String) {
+        _query.value = nuevoTexto
+    }
+
 }
 
 class VerFormularioCDFactory(private val dao: CDsDao) : ViewModelProvider.Factory {

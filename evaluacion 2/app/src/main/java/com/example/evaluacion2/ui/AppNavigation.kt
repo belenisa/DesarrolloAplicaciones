@@ -1,5 +1,7 @@
 package com.example.evaluacion2.ui
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,7 +42,9 @@ import com.example.evaluacion2.ui.Pantalla.VerFormularioCDFactory
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
+
 
 @Composable
 fun AppNavigation(viewModel: VerFormularioCD, modifier: Modifier = Modifier) {
@@ -56,7 +60,13 @@ fun AppNavigation(viewModel: VerFormularioCD, modifier: Modifier = Modifier) {
     Scaffold(
         modifier = modifier.background(Color.Yellow),
         containerColor = Color.Yellow,
-        topBar = { Encabezado(navController = navController, scrollBehavior = scrollBehavior) }, // ✅ navController pasado
+        topBar = {
+            Encabezado(
+                navController = navController,
+                scrollBehavior = scrollBehavior,
+                viewModel = viewModel
+            )
+        },
         bottomBar = { PieDePagina(navController) },
         floatingActionButton = {
             if (currentRoute == "producto") {
@@ -81,6 +91,9 @@ fun AppNavigation(viewModel: VerFormularioCD, modifier: Modifier = Modifier) {
                 Login(
                     onLogingClick = { usuario ->
                         println("Usuario logueado: ${usuario.Nombre}")
+                        navController.navigate("main") {
+                            popUpTo("login") { inclusive = true }
+                        }
                     },
                     navController = navController
                 )
@@ -124,6 +137,7 @@ fun AppNavigation(viewModel: VerFormularioCD, modifier: Modifier = Modifier) {
         }
     }
 }
+
 
 
 
