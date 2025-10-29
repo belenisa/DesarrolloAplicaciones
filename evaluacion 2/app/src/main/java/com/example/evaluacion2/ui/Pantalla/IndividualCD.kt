@@ -1,4 +1,4 @@
-package com.example.evaluacion2.Pantallas
+package com.example.evaluacion2.ui.Pantalla
 
 import android.R
 import androidx.compose.foundation.Image

@@ -1,6 +1,5 @@
-package com.example.evaluacion2.Pantallas
+package com.example.evaluacion2.ui.Pantalla
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +16,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.evaluacion2.Modelo.GuardarCompras
-import java.nio.file.WatchEvent
 
 @Composable
 fun VerCarrito(guardarCompras: GuardarCompras) {

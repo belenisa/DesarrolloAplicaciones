@@ -33,7 +33,7 @@ fun PieDePagina(navController: NavController) {
         Inicio(navController)
         Productos(navController)
         Carrito(navController)
-        Text("Contacto", color = Yellow, fontWeight = FontWeight.Bold)
+        Contacto(navController)
     }
 }
 
@@ -65,5 +65,15 @@ fun Carrito (navController: NavController) {
         colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
     ) {
         Text("\uD83D\uDED2", color = Color.Yellow)
+    }
+}
+
+@Composable
+fun Contacto (navController: NavController) {
+    Button(
+        onClick = { navController.navigate("contacto") },
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+    ) {
+        Text("Contacto", color = Color.Yellow)
     }
 }

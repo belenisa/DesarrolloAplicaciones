@@ -29,28 +29,30 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.evaluacion2.Global.Encabezado
 import com.example.evaluacion2.Global.PieDePagina
-import com.example.evaluacion2.Modelo.CD
 import com.example.evaluacion2.Modelo.DataCD
 import com.example.evaluacion2.Modelo.GuardarCompras
-import com.example.evaluacion2.Pantallas.IndividualCD
-import com.example.evaluacion2.Pantallas.Producto
-import com.example.evaluacion2.Pantallas.VerCarrito
+import com.example.evaluacion2.ui.Pantalla.IndividualCD
+import com.example.evaluacion2.ui.Pantalla.Producto
+import com.example.evaluacion2.ui.Pantalla.VerCarrito
 import com.example.evaluacion2.ui.Pantalla.Login
 import com.example.evaluacion2.ui.Pantalla.PantallaProductos
 import com.example.evaluacion2.ui.Pantalla.VerFormularioCD
 import com.example.evaluacion2.ui.Pantalla.VerFormularioCDFactory
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import com.example.evaluacion2.Global.AgregarDisco
+import com.example.evaluacion2.ui.Pantalla.Contactos
 
-@RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
 
-
+@RequiresApi(Build.VERSION_CODES.O)@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavigation(viewModel: VerFormularioCD, modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val guardarCompras = remember { GuardarCompras() }
+    var tipoUsuarioActual by remember { mutableStateOf<String?>(null) }
 
     val cds by viewModel.productos.collectAsState()
 
@@ -68,32 +70,27 @@ fun AppNavigation(viewModel: VerFormularioCD, modifier: Modifier = Modifier) {
             )
         },
         bottomBar = { PieDePagina(navController) },
+
         floatingActionButton = {
-            if (currentRoute == "producto") {
-                FloatingActionButton(
-                    onClick = { navController.navigate("formulario") },
-                    containerColor = Color.Black,
-                    contentColor = Color.Yellow
-                ) {
-                    Icon(Icons.Filled.Add, contentDescription = "Ir a formulario")
-                }
+            if (currentRoute == "producto" && tipoUsuarioActual == "Admin") {
+                AgregarDisco(onClick = { navController.navigate("formulario") })
             }
         }
+
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = "login",
+            startDestination = "main", // ← Aquí se cambia la pantalla inicial
             modifier = Modifier
                 .padding(innerPadding)
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
         ) {
+
             composable("login") {
                 Login(
                     onLogingClick = { usuario ->
-                        println("Usuario logueado: ${usuario.Nombre}")
-                        navController.navigate("main") {
-                            popUpTo("login") { inclusive = true }
-                        }
+                        tipoUsuarioActual = usuario.TipoUsuario
+                        println("Usuario logueado: ${usuario.Nombre} - Tipo: ${usuario.TipoUsuario}")
                     },
                     navController = navController
                 )
@@ -134,9 +131,14 @@ fun AppNavigation(viewModel: VerFormularioCD, modifier: Modifier = Modifier) {
 
                 PantallaProductos(vm = vm)
             }
+
+            composable("contacto") {
+                Contactos()
+            }
         }
     }
 }
+
 
 
 

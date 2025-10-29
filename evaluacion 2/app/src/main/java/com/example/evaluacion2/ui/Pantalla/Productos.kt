@@ -1,4 +1,4 @@
-package com.example.evaluacion2.Pantallas
+package com.example.evaluacion2.ui.Pantalla
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -30,7 +30,6 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.evaluacion2.Data.Comprar
 import com.example.evaluacion2.Modelo.CD
 import com.example.evaluacion2.Modelo.GuardarCompras
-import com.example.evaluacion2.ui.Pantalla.VerFormularioCD
 
 
 @OptIn(ExperimentalMaterial3Api::class)
