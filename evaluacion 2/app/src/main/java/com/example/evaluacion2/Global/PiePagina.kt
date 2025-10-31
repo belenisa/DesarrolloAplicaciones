@@ -74,6 +74,6 @@ fun Contacto (navController: NavController) {
         onClick = { navController.navigate("contacto") },
         colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
     ) {
-        Text("Contacto", color = Color.Yellow)
+        Text("Nosotros", color = Color.Yellow)
     }
 }

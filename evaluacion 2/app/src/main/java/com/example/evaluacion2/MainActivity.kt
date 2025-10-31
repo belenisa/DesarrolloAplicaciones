@@ -3,10 +3,12 @@ package com.example.evaluacion2
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 
 import androidx.lifecycle.ViewModelProvider
 import com.example.evaluacion2.Modelo.DataCD
@@ -20,6 +22,7 @@ import com.example.evaluacion2.ui.theme.Evaluacion2Theme
 
 
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
