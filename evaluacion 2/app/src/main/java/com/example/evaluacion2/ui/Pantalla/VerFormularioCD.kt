@@ -23,6 +23,8 @@ class VerFormularioCD(private val dao: CDsDao) : ViewModel() {
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = emptyList()
         )
+    val primerosTresCDs: StateFlow<List<CD>> = dao.getPrimerosTresCDs()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
 
     private val _query = MutableStateFlow("")
@@ -91,6 +93,7 @@ class VerFormularioCD(private val dao: CDsDao) : ViewModel() {
         _query.value = nuevoTexto
     }
 
+
 }
 
 class VerFormularioCDFactory(private val dao: CDsDao) : ViewModelProvider.Factory {
@@ -102,3 +105,4 @@ class VerFormularioCDFactory(private val dao: CDsDao) : ViewModelProvider.Factor
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
+

@@ -44,6 +44,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.evaluacion2.Global.AgregarDisco
 import com.example.evaluacion2.ui.Pantalla.Contactos
+import com.example.evaluacion2.ui.Pantalla.Main
 
 
 @RequiresApi(Build.VERSION_CODES.O)@OptIn(ExperimentalMaterial3Api::class)
@@ -97,7 +98,7 @@ fun AppNavigation(viewModel: VerFormularioCD, modifier: Modifier = Modifier) {
             }
 
             composable("main") {
-                MainScreen(navController, scrollBehavior)
+                MainScreen(navController, scrollBehavior, viewModel)
             }
 
             composable("producto") {
@@ -143,12 +144,20 @@ fun AppNavigation(viewModel: VerFormularioCD, modifier: Modifier = Modifier) {
 
 
 
-            @OptIn(ExperimentalMaterial3Api::class)
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navController: NavController, scrollBehavior: TopAppBarScrollBehavior) {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .background(Color.Yellow)
-        .padding(16.dp)) {
+fun MainScreen(
+    navController: NavController,
+    scrollBehavior: TopAppBarScrollBehavior,
+    viewModel: VerFormularioCD
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Yellow)
+            .padding(16.dp)
+    ) {
+        Main(viewModel = viewModel, navController = navController)
     }
 }

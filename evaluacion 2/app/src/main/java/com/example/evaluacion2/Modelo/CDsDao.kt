@@ -25,4 +25,7 @@ interface CDsDao {
     @Query("SELECT * FROM productos WHERE titulo LIKE '%' || :query || '%' OR autor LIKE '%' || :query || '%'")
     fun buscarProductos(query: String): Flow<List<CD>>
 
+    @Query("SELECT * FROM productos LIMIT 3")
+    fun getPrimerosTresCDs(): Flow<List<CD>>
+
 }
