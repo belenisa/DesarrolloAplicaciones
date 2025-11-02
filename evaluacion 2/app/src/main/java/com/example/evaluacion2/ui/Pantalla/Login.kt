@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,13 +35,33 @@ import com.example.evaluacion2.Modelo.Usuarios
 
 
 
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Login(onLogingClick: (Usuarios) -> Unit, navController: NavController) {
-    var nombre by remember { mutableStateOf("") }
+fun Login(onLogingClick: (Usuarios) -> Unit, onLogout: () -> Unit,
+    navController: NavController, tipoUsuarioActual: String?, nombreUsuarioActual: String?,
+    setNombreUsuarioActual: (String?) -> Unit
+) {
+    var nombre by rememberSaveable { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
     val listaUsuarios = ListaUsuarios().obtenerUsuarios()
     var error by remember { mutableStateOf(false) }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            contentAlignment = Alignment.TopEnd
+        ) {
+            if (tipoUsuarioActual != null) {
+                SalirUsuario(navController = navController, onLogout = {
+                    onLogout()
+                    setNombreUsuarioActual(null)
+                })
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -51,25 +73,29 @@ fun Login(onLogingClick: (Usuarios) -> Unit, navController: NavController) {
         Titulo()
         Spacer(modifier = Modifier.height(24.dp))
 
-        NombreUsuario(nombre) { nombre = it }
+        NombreUsuario(nombre, { nombre = it }, nombreUsuarioActual)
         Spacer(modifier = Modifier.height(16.dp))
 
-        Contrasena(contrasena) { contrasena = it }
-        Spacer(modifier = Modifier.height(24.dp))
+        if (tipoUsuarioActual == null) {
+            Contrasena(contrasena) { contrasena = it }
+            Spacer(modifier = Modifier.height(24.dp))
+        }
 
-        IngresarUsuario(
-            nombre = nombre,
-            contrasena = contrasena,
-            usuarios = listaUsuarios,
-            onLogingClick = {
-                onLogingClick(it)
-                navController.navigate("main") {
-                    popUpTo("login") { inclusive = true }
-                }
-            },
-            onError = { error = true }
-        )
-
+        if (tipoUsuarioActual == null) {
+            IngresarUsuario(
+                nombre = nombre,
+                contrasena = contrasena,
+                usuarios = listaUsuarios,
+                onLogingClick = {
+                    onLogingClick(it)
+                    setNombreUsuarioActual(it.Usuario)
+                    navController.navigate("main") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                },
+                onError = { error = true }
+            )
+        }
 
         if (error) {
             Text(
@@ -79,10 +105,12 @@ fun Login(onLogingClick: (Usuarios) -> Unit, navController: NavController) {
                 modifier = Modifier.padding(top = 8.dp)
             )
         }
-
-        Registro(navController)
+        if (tipoUsuarioActual == null || tipoUsuarioActual!="Cliente") {
+            Registro(navController)
+        }
     }
 }
+
 
 
 @Composable
@@ -97,26 +125,46 @@ fun Titulo() {
 
 
 @Composable
-fun NombreUsuario(nombre: String, onNombreChange: (String) -> Unit) {
-    OutlinedTextField(
-        value = nombre,
-        onValueChange = onNombreChange,
-        label = { Text("Usuario") },
-        singleLine = true,
-        modifier = Modifier
-            .fillMaxWidth(0.8f)
-            .padding(horizontal = 8.dp),
-        colors = TextFieldDefaults.colors(
-            focusedTextColor = Color.Black,
-            unfocusedTextColor = Color.Black,
-            focusedIndicatorColor = Color.Black,
-            unfocusedIndicatorColor = Color.Gray,
-            focusedLabelColor = Color.Black,
-            cursorColor = Color.Black,
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent
+fun NombreUsuario(
+    nombre: String,
+    onNombreChange: (String) -> Unit,
+    nombreUsuarioActual: String?
+) {
+    if (nombreUsuarioActual != null) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = nombreUsuarioActual,
+                color = Color.Black,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+            )
+        }
+    } else {
+        OutlinedTextField(
+            value = nombre,
+            onValueChange = onNombreChange,
+            label = { Text("Usuario") },
+            singleLine = true,
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .padding(horizontal = 8.dp),
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black,
+                focusedIndicatorColor = Color.Black,
+                unfocusedIndicatorColor = Color.Gray,
+                focusedLabelColor = Color.Black,
+                cursorColor = Color.Black,
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent
+            )
         )
-    )
+    }
 }
 
 @Composable
@@ -188,5 +236,18 @@ fun IngresarUsuario(
     }
 }
 
-
-
+@Composable
+fun SalirUsuario(navController: NavController, onLogout: () -> Unit){
+    Text(
+        text = "Salir",
+        color = Color(0xFF000000),
+        fontWeight = FontWeight.Bold,
+        fontSize = 18.sp,
+        modifier = Modifier.clickable {
+            onLogout()
+            navController.navigate("login") {
+                popUpTo("main") { inclusive = true }
+            }
+        }
+    )
+}

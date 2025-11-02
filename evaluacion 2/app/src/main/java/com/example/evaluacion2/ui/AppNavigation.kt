@@ -41,10 +41,12 @@ import com.example.evaluacion2.ui.Pantalla.VerFormularioCDFactory
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.example.evaluacion2.Global.AgregarDisco
 import com.example.evaluacion2.ui.Pantalla.Contactos
 import com.example.evaluacion2.ui.Pantalla.Main
+import com.example.evaluacion2.ui.Pantalla.SalirUsuario
 
 
 @RequiresApi(Build.VERSION_CODES.O)@OptIn(ExperimentalMaterial3Api::class)
@@ -60,6 +62,10 @@ fun AppNavigation(viewModel: VerFormularioCD, modifier: Modifier = Modifier) {
     val currentBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry.value?.destination?.route
 
+    var nombreUsuarioActual by rememberSaveable { mutableStateOf<String?>(null) }
+
+
+
     Scaffold(
         modifier = modifier.background(Color.Yellow),
         containerColor = Color.Yellow,
@@ -71,15 +77,13 @@ fun AppNavigation(viewModel: VerFormularioCD, modifier: Modifier = Modifier) {
             )
         },
         bottomBar = { PieDePagina(navController) },
-
         floatingActionButton = {
             if (currentRoute == "producto" && tipoUsuarioActual == "Admin") {
                 AgregarDisco(onClick = { navController.navigate("formulario") })
             }
         }
-
     ) { innerPadding ->
-        NavHost(
+    NavHost(
             navController = navController,
             startDestination = "main", // ← Aquí se cambia la pantalla inicial
             modifier = Modifier
@@ -87,15 +91,22 @@ fun AppNavigation(viewModel: VerFormularioCD, modifier: Modifier = Modifier) {
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
         ) {
 
-            composable("login") {
-                Login(
-                    onLogingClick = { usuario ->
-                        tipoUsuarioActual = usuario.TipoUsuario
-                        println("Usuario logueado: ${usuario.Nombre} - Tipo: ${usuario.TipoUsuario}")
-                    },
-                    navController = navController
-                )
-            }
+        composable("login") {
+            Login(
+                onLogingClick = { usuario ->
+                    tipoUsuarioActual = usuario.TipoUsuario
+                    nombreUsuarioActual = usuario.Usuario
+                },
+                onLogout = {
+                    tipoUsuarioActual = null
+                    nombreUsuarioActual = null
+                },
+                tipoUsuarioActual = tipoUsuarioActual,
+                nombreUsuarioActual = nombreUsuarioActual,
+                setNombreUsuarioActual = { nombreUsuarioActual = it },
+                navController = navController
+            )
+        }
 
             composable("main") {
                 MainScreen(navController, scrollBehavior, viewModel)
@@ -108,7 +119,8 @@ fun AppNavigation(viewModel: VerFormularioCD, modifier: Modifier = Modifier) {
                         navController.navigate("detalle/${cdSeleccionado.titulo}")
                     },
                     guardarCompras = guardarCompras,
-                    navController = navController
+                    navController = navController,
+                    tipoUsuarioActual = tipoUsuarioActual
                 )
             }
 
@@ -116,7 +128,12 @@ fun AppNavigation(viewModel: VerFormularioCD, modifier: Modifier = Modifier) {
                 val titulo = backStackEntry.arguments?.getString("titulo")
                 val cd = cds.find { it.titulo == titulo }
                 cd?.let {
-                    IndividualCD(cd = it, guardarCompras = guardarCompras)
+                    IndividualCD(
+                        cd = it,
+                        guardarCompras = guardarCompras,
+                        viewModel = viewModel,
+                        tipoUsuarioActual = tipoUsuarioActual
+                    )
                 }
             }
 
@@ -136,6 +153,7 @@ fun AppNavigation(viewModel: VerFormularioCD, modifier: Modifier = Modifier) {
             composable("contacto") {
                 Contactos()
             }
+
         }
     }
 }

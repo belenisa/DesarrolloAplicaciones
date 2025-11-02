@@ -74,6 +74,13 @@ class VerFormularioCD(private val dao: CDsDao) : ViewModel() {
         }
     }
 
+    fun eliminarCD(cd: CD) {
+        viewModelScope.launch {
+            dao.eliminarCD(cd)
+        }
+    }
+
+
     fun insertarCatalogoInicial() {
         val cdsIniciales = listOf(
             CD(1, "The Cure", 1982, "Pornography", "Rock", 12990, R.drawable.cure, null),

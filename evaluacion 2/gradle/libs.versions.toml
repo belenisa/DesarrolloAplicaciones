@@ -19,6 +19,7 @@ room = "2.6.1"
 lifecycleViewmodelKtx = "2.9.4"
 materialIconsExtended = "1.7.8"
 runtime = "1.9.4"
+benchmarkTraceprocessor = "1.4.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -47,6 +48,7 @@ coil-compose = { group = "io.coil-kt", name = "coil-compose", version = "2.4.0" 
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtime" }
+androidx-benchmark-traceprocessor = { group = "androidx.benchmark", name = "benchmark-traceprocessor", version.ref = "benchmarkTraceprocessor" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

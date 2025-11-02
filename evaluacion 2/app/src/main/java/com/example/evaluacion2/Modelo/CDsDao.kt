@@ -1,6 +1,7 @@
 package com.example.evaluacion2.Modelo
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -27,5 +28,9 @@ interface CDsDao {
 
     @Query("SELECT * FROM productos LIMIT 3")
     fun getPrimerosTresCDs(): Flow<List<CD>>
+
+    @Delete
+    suspend fun eliminarCD(cd: CD)
+
 
 }

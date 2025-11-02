@@ -66,6 +66,8 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.navigation.runtime.ktx)
+    implementation(libs.androidx.benchmark.traceprocessor)
+    implementation(libs.androidx.foundation.layout)
     ksp("androidx.room:room-compiler:2.6.1")
 
 
