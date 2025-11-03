@@ -19,14 +19,18 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 
+
+import androidx.compose.foundation.layout.navigationBarsPadding
+
+
 @Composable
 fun PieDePagina(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp)
             .background(Color.Black)
-            .padding(15.dp),
+            .padding(15.dp)
+            .navigationBarsPadding(), // según los botones del sistema
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -36,6 +40,8 @@ fun PieDePagina(navController: NavController) {
         Contacto(navController)
     }
 }
+
+
 
 
 @Composable

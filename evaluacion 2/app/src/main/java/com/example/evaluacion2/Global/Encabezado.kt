@@ -145,7 +145,7 @@ fun Buscar(viewModel: VerFormularioCD, navController: NavController) {
 @Composable
 fun Titulo(){
     Text(
-        text = stringResource(id = R.string.app_name),
+        text = "RageMusic",
         color = Color(0xFFFFF176),
         fontWeight = FontWeight.Bold,
         fontSize = 18.sp
