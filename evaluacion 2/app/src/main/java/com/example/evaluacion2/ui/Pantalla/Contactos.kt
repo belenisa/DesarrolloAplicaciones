@@ -42,6 +42,8 @@ fun Contactos() {
                     .padding(16.dp)
                     .verticalScroll(rememberScrollState())
             ) {
+                Logo()
+                Spacer(modifier = Modifier.height(16.dp))
                 Encabezado()
                 Spacer(modifier = Modifier.height(16.dp))
                 Relleno()

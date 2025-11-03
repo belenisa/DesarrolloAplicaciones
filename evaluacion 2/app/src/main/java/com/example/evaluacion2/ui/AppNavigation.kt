@@ -43,7 +43,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import com.example.evaluacion2.Data.ListaUsuarios
 import com.example.evaluacion2.Global.AgregarDisco
+import com.example.evaluacion2.ui.Pantalla.AgregarUsuario
 import com.example.evaluacion2.ui.Pantalla.Contactos
 import com.example.evaluacion2.ui.Pantalla.Main
 import com.example.evaluacion2.ui.Pantalla.SalirUsuario
@@ -63,8 +65,7 @@ fun AppNavigation(viewModel: VerFormularioCD, modifier: Modifier = Modifier) {
     val currentRoute = currentBackStackEntry.value?.destination?.route
 
     var nombreUsuarioActual by rememberSaveable { mutableStateOf<String?>(null) }
-
-
+    val listaUsuariosGlobal = remember { ListaUsuarios() }
 
     Scaffold(
         modifier = modifier.background(Color.Yellow),
@@ -93,6 +94,7 @@ fun AppNavigation(viewModel: VerFormularioCD, modifier: Modifier = Modifier) {
 
         composable("login") {
             Login(
+                listaUsuarios = listaUsuariosGlobal,
                 onLogingClick = { usuario ->
                     tipoUsuarioActual = usuario.TipoUsuario
                     nombreUsuarioActual = usuario.Usuario
@@ -104,6 +106,7 @@ fun AppNavigation(viewModel: VerFormularioCD, modifier: Modifier = Modifier) {
                 tipoUsuarioActual = tipoUsuarioActual,
                 nombreUsuarioActual = nombreUsuarioActual,
                 setNombreUsuarioActual = { nombreUsuarioActual = it },
+                setTipoUsuarioActual = { tipoUsuarioActual = it },
                 navController = navController
             )
         }
@@ -154,9 +157,19 @@ fun AppNavigation(viewModel: VerFormularioCD, modifier: Modifier = Modifier) {
                 Contactos()
             }
 
+
+            composable("pantallaRegistro") {
+                AgregarUsuario(
+                    listaUsuarios = listaUsuariosGlobal,
+                    tipoUsuarioActual = tipoUsuarioActual,
+                    navController = navController
+                )
+            }
+
         }
     }
 }
+
 
 
 

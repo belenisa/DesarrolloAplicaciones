@@ -44,4 +44,14 @@ class ListaUsuarios {
     fun agregarUsuario(usuario: Usuarios) {
         listaUsuarios.add(usuario)
     }
+
+    fun usuarioExiste(nombreUsuario: String): Boolean {
+        return listaUsuarios.any { it.Usuario.equals(nombreUsuario, ignoreCase = true) }
+    }
+
+    fun correoExiste(correo: String): Boolean {
+        return listaUsuarios.any { it.correo.equals(correo, ignoreCase = true) }
+    }
+
+
 }

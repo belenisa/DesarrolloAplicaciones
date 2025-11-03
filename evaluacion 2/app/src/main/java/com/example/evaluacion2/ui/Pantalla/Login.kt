@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,13 +39,18 @@ import com.example.evaluacion2.Modelo.Usuarios
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Login(onLogingClick: (Usuarios) -> Unit, onLogout: () -> Unit,
-    navController: NavController, tipoUsuarioActual: String?, nombreUsuarioActual: String?,
-    setNombreUsuarioActual: (String?) -> Unit
+fun Login(
+    listaUsuarios: ListaUsuarios, // ✅ agregado
+    onLogingClick: (Usuarios) -> Unit,
+    onLogout: () -> Unit,
+    navController: NavController,
+    tipoUsuarioActual: String?,
+    nombreUsuarioActual: String?,
+    setNombreUsuarioActual: (String?) -> Unit,
+    setTipoUsuarioActual: (String?) -> Unit
 ) {
     var nombre by rememberSaveable { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
-    val listaUsuarios = ListaUsuarios().obtenerUsuarios()
     var error by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -58,6 +64,7 @@ fun Login(onLogingClick: (Usuarios) -> Unit, onLogout: () -> Unit,
                 SalirUsuario(navController = navController, onLogout = {
                     onLogout()
                     setNombreUsuarioActual(null)
+                    setTipoUsuarioActual(null)
                 })
             }
         }
@@ -85,7 +92,7 @@ fun Login(onLogingClick: (Usuarios) -> Unit, onLogout: () -> Unit,
             IngresarUsuario(
                 nombre = nombre,
                 contrasena = contrasena,
-                usuarios = listaUsuarios,
+                usuarios = listaUsuarios.obtenerUsuarios(), // ✅ usa la lista global
                 onLogingClick = {
                     onLogingClick(it)
                     setNombreUsuarioActual(it.Usuario)
@@ -105,7 +112,7 @@ fun Login(onLogingClick: (Usuarios) -> Unit, onLogout: () -> Unit,
                 modifier = Modifier.padding(top = 8.dp)
             )
         }
-        if (tipoUsuarioActual == null || tipoUsuarioActual!="Cliente") {
+        if (tipoUsuarioActual == null || tipoUsuarioActual != "Cliente") {
             Registro(navController)
         }
     }
@@ -177,6 +184,7 @@ fun Contrasena(contrasena: String, onContrasenaChange: (String) -> Unit) {
         modifier = Modifier
             .fillMaxWidth(0.8f)
             .padding(horizontal = 8.dp),
+        visualTransformation = PasswordVisualTransformation(),
         colors = TextFieldDefaults.colors(
             focusedTextColor = Color.Black,
             unfocusedTextColor = Color.Black,
@@ -185,7 +193,7 @@ fun Contrasena(contrasena: String, onContrasenaChange: (String) -> Unit) {
             focusedLabelColor = Color.Black,
             cursorColor = Color.Black,
             focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent
+            unfocusedContainerColor = Color.Transparent,
         )
     )
 }
