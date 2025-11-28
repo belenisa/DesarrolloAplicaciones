@@ -9,21 +9,15 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 
-interface RolService {
+interface EstadoVentaService {
 
-    @GET("api/rolusuarios")
+    @GET("api/estado_ventas")
     suspend fun listar(): Response<List<Rol>>
 
-    @GET("api/rolusuarios/{id}")
+    @GET("api/estado_ventas/{id}")
     suspend fun obtener(@Path("id") id: Int): Response<Rol>
 
-    @POST("api/rolusuarios")
-    suspend fun crear(@Body nuevo: Rol): Response<Rol>
-
-    @PUT("api/rolusuarios/{id}")
+    @PUT("api/estado_ventas/{id}")
     suspend fun actualizar(@Path("id") id: Int, @Body datos: Rol): Response<Rol>
-
-    @DELETE("api/rolusuarios/{id}")
-    suspend fun eliminar(@Path("id") id: Int): Response<Unit>
 
 }
