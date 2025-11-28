@@ -19,23 +19,29 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 
+
+import androidx.compose.foundation.layout.navigationBarsPadding
+
+
 @Composable
 fun PieDePagina(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp)
             .background(Color.Black)
-            .padding(15.dp),
+            .padding(15.dp)
+            .navigationBarsPadding(), // según los botones del sistema
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Inicio(navController)
         Productos(navController)
         Carrito(navController)
-        Text("Opción 4", color = Yellow, fontWeight = FontWeight.Bold)
+        Contacto(navController)
     }
 }
+
+
 
 
 @Composable
@@ -65,5 +71,15 @@ fun Carrito (navController: NavController) {
         colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
     ) {
         Text("\uD83D\uDED2", color = Color.Yellow)
+    }
+}
+
+@Composable
+fun Contacto (navController: NavController) {
+    Button(
+        onClick = { navController.navigate("contacto") },
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+    ) {
+        Text("Nosotros", color = Color.Yellow)
     }
 }

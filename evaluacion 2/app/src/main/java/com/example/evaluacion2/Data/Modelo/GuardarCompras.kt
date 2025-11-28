@@ -1,13 +1,17 @@
-package com.example.evaluacion2.Modelo
+package com.example.evaluacion2.Data.Modelo
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 
 
 class GuardarCompras {
-    private val compras = mutableStateListOf<CD>()
-    val carrito: List<CD> get() = compras
+    var carrito = mutableStateListOf<CD>()
+    var cantidades = mutableStateMapOf<String, Int>()
 
     fun agregar(cd: CD) {
-        compras.add(cd)
+        if (!carrito.contains(cd)) {
+            carrito.add(cd)
+        }
+        cantidades[cd.titulo] = (cantidades[cd.titulo] ?: 0) + 1
     }
 }
