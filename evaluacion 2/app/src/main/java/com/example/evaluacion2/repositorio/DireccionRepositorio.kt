@@ -1,20 +1,18 @@
-
 package com.example.evaluacion2.repositorio
 
-
-import com.example.evaluacion2.Data.network.Rol.VentaServive
-import com.example.evaluacion2.Modelo.Usuarios
-import com.example.evaluacion2.Modelo.Venta
+import com.example.evaluacion2.Data.Modelo.Direccion
+import com.example.evaluacion2.Data.Modelo.Imagen
+import com.example.evaluacion2.Data.network.DireccionService
 import retrofit2.Response
 
-class VentaRepositorio(
-    private val service: VentaServive = ApiNet.ventaService
+
+class DireccionRepositorio(
+    private val service: DireccionService = ApiNet.direccionService
 ) {
     private fun <T> Response<T>.unwrap(): T {
         if (isSuccessful) {
             val body = body()
             if (body != null) return body
-            // Usa code() y message() como métodos, y reemplaza -> correcto
             throw Exception(
                 when (code()) {
                     204, 205 -> "OK sin contenido (HTTP ${code()})"
@@ -23,21 +21,20 @@ class VentaRepositorio(
             )
         } else {
             val msg = try { errorBody()?.string() } catch (_: Exception) { null }
-            // IMPORTANTE: code() y message() (no $code ni $message)
             throw Exception("HTTP ${code()}: ${msg ?: message() ?: "Error desconocido"}")
         }
     }
 
-    suspend fun listar(): Result<List<Venta>> =
+    suspend fun listar(): Result<List<Direccion>> =
         runCatching { service.listar().unwrap() }
 
-    suspend fun obtener(id: Int): Result<Venta> =
+    suspend fun obtener(id: Int): Result<Direccion> =
         runCatching { service.obtener(id).unwrap() }
 
-    suspend fun crear(nuevo: Venta): Result<Venta> =
+    suspend fun crear(nuevo: Direccion): Result<Direccion> =
         runCatching { service.crear(nuevo).unwrap() }
 
-    suspend fun actualizar(id: Int, datos: Venta): Result<Venta> =
+    suspend fun actualizar(id: Int, datos: Direccion): Result<Direccion> =
         runCatching { service.actualizar(id, datos).unwrap() }
 
     suspend fun eliminar(id: Int): Result<Unit> = runCatching {

@@ -7,7 +7,7 @@ import retrofit2.http.*
 import retrofit2.Response
 
 
-interface MetodoPagoService {
+interface MetodoEnvioService {
 
     @GET("api/metodo_envio")
     suspend fun listar(): Response<List<MetodoEnvio>>

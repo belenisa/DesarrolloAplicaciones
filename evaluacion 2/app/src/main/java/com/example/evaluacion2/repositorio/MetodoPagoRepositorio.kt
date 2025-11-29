@@ -1,14 +1,12 @@
-
 package com.example.evaluacion2.repositorio
 
-
-import com.example.evaluacion2.Data.network.Rol.VentaServive
-import com.example.evaluacion2.Modelo.Usuarios
-import com.example.evaluacion2.Modelo.Venta
+import com.example.evaluacion2.Data.Modelo.MetodoPago
+import com.example.evaluacion2.Data.network.MetodoPagoService
 import retrofit2.Response
 
-class VentaRepositorio(
-    private val service: VentaServive = ApiNet.ventaService
+
+class MetodoPagoRepositorio(
+    private val service: MetodoPagoService = ApiNet.metodoPagoService
 ) {
     private fun <T> Response<T>.unwrap(): T {
         if (isSuccessful) {
@@ -28,16 +26,16 @@ class VentaRepositorio(
         }
     }
 
-    suspend fun listar(): Result<List<Venta>> =
+    suspend fun listar(): Result<List<MetodoPago>> =
         runCatching { service.listar().unwrap() }
 
-    suspend fun obtener(id: Int): Result<Venta> =
+    suspend fun obtener(id: Int): Result<MetodoPago> =
         runCatching { service.obtener(id).unwrap() }
 
-    suspend fun crear(nuevo: Venta): Result<Venta> =
+    suspend fun crear(nuevo: MetodoPago): Result<MetodoPago> =
         runCatching { service.crear(nuevo).unwrap() }
 
-    suspend fun actualizar(id: Int, datos: Venta): Result<Venta> =
+    suspend fun actualizar(id: Int, datos: MetodoPago): Result<MetodoPago> =
         runCatching { service.actualizar(id, datos).unwrap() }
 
     suspend fun eliminar(id: Int): Result<Unit> = runCatching {

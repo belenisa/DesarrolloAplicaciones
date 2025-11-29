@@ -1,4 +1,3 @@
-
 package com.example.evaluacion2.repositorio
 
 import com.example.evaluacion2.Data.Modelo.Rol
