@@ -1,15 +1,12 @@
+
 package com.example.evaluacion2.repositorio
 
-import com.example.evaluacion2.Data.Modelo.Rol
-import com.example.evaluacion2.Data.network.Rol.RolService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import retrofit2.HttpException
-import java.io.IOException
 
+import com.example.evaluacion2.Data.network.Rol.VentaServive
+import com.example.evaluacion2.Modelo.Venta
 
 class VentaRepositorio(
-    private val service: VentaService
+    private val service: VentaServive = ApiNet.ventaService
 ) {
     suspend fun listarVentas(): List<Venta>? {
         val response = service.listar()
