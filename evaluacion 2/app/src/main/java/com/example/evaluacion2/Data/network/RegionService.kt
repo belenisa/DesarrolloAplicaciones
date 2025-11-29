@@ -1,6 +1,7 @@
 
 package com.example.evaluacion2.Data.network
 
+import com.example.evaluacion2.Data.Modelo.Region
 import com.example.evaluacion2.Modelo.Usuarios
 import retrofit2.http.*
 import retrofit2.Response

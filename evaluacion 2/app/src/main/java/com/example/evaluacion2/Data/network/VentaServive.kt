@@ -1,6 +1,7 @@
 package com.example.evaluacion2.Data.network.Rol
 
 import com.example.evaluacion2.Data.Modelo.Rol
+import com.example.evaluacion2.Modelo.Venta
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
