@@ -22,7 +22,7 @@ class UsuarioRepositorio(
             )
         } else {
             val msg = try { errorBody()?.string() } catch (_: Exception) { null }
-            // IMPORTANTE: code() y message() (no $code ni $message)
+            //code() y message() (no $code ni $message)
             throw Exception("HTTP ${code()}: ${msg ?: message() ?: "Error desconocido"}")
         }
     }
