@@ -20,7 +20,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
 import com.example.evaluacion2.Data.Modelo.Producto
 import com.example.evaluacion2.R
 import com.example.evaluacion2.viewmodel.ProductoViewModel
@@ -59,8 +58,7 @@ fun CarruselProductos(productos: List<Producto>, navController: NavController) {
         val index = page % productosLimitados.size
         val producto = productosLimitados[index]
 
-        // Si agregas imagenUri en Producto, usa Coil:
-        val painter = painterResource(id = R.drawable.ic_menu_gallery)
+        val painter = painterResource(id = android.R.drawable.ic_menu_gallery)
 
         Card(
             modifier = Modifier

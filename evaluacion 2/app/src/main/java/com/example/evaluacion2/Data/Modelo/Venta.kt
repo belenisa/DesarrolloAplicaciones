@@ -1,5 +1,9 @@
 package com.example.evaluacion2.Modelo
 
+import com.example.evaluacion2.Data.Modelo.EstadoVenta
+import com.example.evaluacion2.Data.Modelo.MetodoEnvio
+import com.example.evaluacion2.Data.Modelo.MetodoPago
+import com.example.evaluacion2.Data.Modelo.Producto
 
 
 data class Venta (

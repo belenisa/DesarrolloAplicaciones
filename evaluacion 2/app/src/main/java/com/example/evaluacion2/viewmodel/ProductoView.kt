@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class ProductoViewModel(
+class ProductoView(
     private val repo: ProductoRepositorio = ProductoRepositorio()
 ) : ViewModel() {
 

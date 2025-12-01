@@ -3,8 +3,8 @@ package com.example.evaluacion2.viewmodel.TipoProducto
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.evaluacion2.Data.Modelo.Region
-import com.example.evaluacion2.repositorio.RegionRepositorio
+import com.example.evaluacion2.Data.Modelo.TipoProducto
+import com.example.evaluacion2.repositorio.TipoProductoRepositorio
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -48,7 +48,7 @@ class TipoProductoView(
                 return@launch
             }
             repo.obtener(id)
-                .onSuccess { productos -> onResult(region) }
+                .onSuccess { productos -> onResult(productos) }
                 .onFailure { e ->
                     _error.value = e.message ?: "Error al obtener región"
                     onResult(null)

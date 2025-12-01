@@ -1,90 +1,57 @@
-package com.example.evaluacion2.ui.Pantalla
-
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedButtonDefaults.Icon
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
-import com.example.evaluacion2.Data.Comprar
-import com.example.evaluacion2.Global.QuitarCDs
-import com.example.evaluacion2.Modelo.CD
-import com.example.evaluacion2.Modelo.GuardarCompras
-
+import com.example.evaluacion2.Data.Modelo.GuardarCompras
+import com.example.evaluacion2.Data.Modelo.Producto
+import com.example.evaluacion2.viewmodel.ProductoView
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Producto(
-    viewModel: VerFormularioCD,
-    onCDClick: (CD) -> Unit,
+    viewModel: ProductoView, // Usamos tu ViewModel actual
+    onCDClick: (Producto) -> Unit, // Mantengo el nombre del callback
     guardarCompras: GuardarCompras,
     navController: NavController,
     tipoUsuarioActual: String?
 ) {
-    val cds by viewModel.productos.collectAsState()
+    val productos by viewModel.productos.collectAsState()
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        items(cds) { cd ->
+        items(productos) { producto ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
-                    .clickable { onCDClick(cd) },
+                    .clickable { onCDClick(producto) },
                 elevation = CardDefaults.cardElevation(4.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.Black)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
 
-
-                    val painter = if (cd.imagenResId == null) {
-                        rememberAsyncImagePainter(model = cd.imagenUri)
-                    } else {
-                        painterResource(id = cd.imagenResId)
-                    }
+                    // Imagen desde API
+                    val imagenUrl = "https://ragemusicbackend.onrender.com/api/imagenes/${producto.id}"
+                    val painter = rememberAsyncImagePainter(model = imagenUrl)
 
                     Image(
                         painter = painter,
-                        contentDescription = cd.titulo,
+                        contentDescription = producto.nombre,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(180.dp)
@@ -94,13 +61,21 @@ fun Producto(
                         contentScale = ContentScale.Crop
                     )
 
-                    Text("Título: ${cd.titulo}", style = MaterialTheme.typography.titleMedium, color = Color.Yellow)
-                    Text("Artista: ${cd.autor}", style = MaterialTheme.typography.bodyMedium, color = Color.Yellow)
-                    Text("Año: ${cd.anio}", style = MaterialTheme.typography.bodySmall, color = Color.Yellow)
-                    Text("Género: ${cd.genero}", style = MaterialTheme.typography.bodySmall, color = Color.Yellow)
-                    Text("Precio: \$${cd.precio}", style = MaterialTheme.typography.bodySmall, color = Color.Yellow)
+                    // Datos del producto
+                    Text("Nombre: ${producto.nombre}", style = MaterialTheme.typography.titleMedium, color = Color.Yellow)
+                    Text("Descripción: ${producto.descripcion}", style = MaterialTheme.typography.bodyMedium, color = Color.Yellow)
+                    Text("Precio: \$${producto.precio}", style = MaterialTheme.typography.bodySmall, color = Color.Yellow)
+                    Text("Stock: ${producto.stock}", style = MaterialTheme.typography.bodySmall, color = Color.Yellow)
 
+                    producto.tipoProducto?.let {
+                        Text("Tipo: ${it.nombre}", style = MaterialTheme.typography.bodySmall, color = Color.Yellow)
+                    }
 
+                    producto.artistas?.artista?.let {
+                        Text("Artista: ${it.nombre}", style = MaterialTheme.typography.bodySmall, color = Color.Yellow)
+                    }
+
+                    // Botones
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -108,17 +83,18 @@ fun Producto(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Comprar(cd = cd, guardarCompras = guardarCompras)
+                        // Comprar
+                        Comprar(cd = producto, guardarCompras = guardarCompras) // Mantengo el nombre del parámetro "cd"
 
-
+                        // Eliminar solo para Admin
                         if (tipoUsuarioActual == "Admin") {
-                            QuitarCDs(cd = cd, viewModel = viewModel, tipoUsuarioActual = tipoUsuarioActual)
+                            QuitarCDs(cd = producto, viewModel = viewModel, tipoUsuarioActual = tipoUsuarioActual)
                         }
-
                     }
-
                 }
             }
         }
     }
 }
+
+private fun ColumnScope.rememberAsyncImagePainter(model: String) {}
