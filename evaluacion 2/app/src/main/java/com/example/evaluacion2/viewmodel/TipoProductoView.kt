@@ -1,5 +1,5 @@
 
-package com.example.evaluacion2.viewmodel.region
+package com.example.evaluacion2.viewmodel.TipoProducto
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,12 +9,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class RegionView(
-    private val repo: RegionRepositorio = RegionRepositorio()
+class TipoProductoView(
+    private val repo: TipoProductoRepositorio = TipoProductoRepositorio()
 ) : ViewModel() {
 
-    private val _regiones = MutableStateFlow<List<Region>>(emptyList())
-    val regiones: StateFlow<List<Region>> = _regiones
+    private val _tipoProducto = MutableStateFlow<List<TipoProducto>>(emptyList())
+    val productos: StateFlow<List<TipoProducto>> = _tipoProducto
 
     private val _cargando = MutableStateFlow(false)
     val cargando: StateFlow<Boolean> = _cargando
@@ -28,7 +28,7 @@ class RegionView(
             try {
                 repo.listar()
                     .onSuccess { lista ->
-                        _regiones.value = lista
+                        _tipoProducto.value = lista
                         _error.value = null
                     }
                     .onFailure { e ->
@@ -40,7 +40,7 @@ class RegionView(
         }
     }
 
-    fun obtenerRegion(id: Int, onResult: (Region?) -> Unit) {
+    fun obtenerTipoProducto(id: Int, onResult: (TipoProducto?) -> Unit) {
         viewModelScope.launch {
             if (id <= 0) {
                 _error.value = "ID inválido para obtener región"
@@ -48,7 +48,7 @@ class RegionView(
                 return@launch
             }
             repo.obtener(id)
-                .onSuccess { region -> onResult(region) }
+                .onSuccess { productos -> onResult(region) }
                 .onFailure { e ->
                     _error.value = e.message ?: "Error al obtener región"
                     onResult(null)
@@ -56,7 +56,7 @@ class RegionView(
         }
     }
 
-    fun crearRegion(nombre: String) {
+    fun crearTipoProducto(nombre: String) {
         viewModelScope.launch {
             if (nombre.isBlank()) {
                 _error.value = "El nombre de la región es obligatorio"
@@ -64,11 +64,11 @@ class RegionView(
             }
             _cargando.value = true
             try {
-                repo.crear(Region(nombre = nombre))
+                repo.crear(TipoProducto(nombre = nombre))
                     .onSuccess { creada ->
-                        val actual = _regiones.value.toMutableList()
+                        val actual = _tipoProducto.value.toMutableList()
                         actual.add(creada)
-                        _regiones.value = actual
+                        _tipoProducto.value = actual
                         _error.value = null
                     }
                     .onFailure { e ->
@@ -80,7 +80,7 @@ class RegionView(
         }
     }
 
-    fun actualizarRegion(id: Int, nombre: String) {
+    fun actualizarTipoProducto(id: Int, nombre: String) {
         viewModelScope.launch {
             if (id <= 0) {
                 _error.value = "ID inválido para actualizar"
@@ -92,12 +92,12 @@ class RegionView(
             }
             _cargando.value = true
             try {
-                repo.actualizar(id, Region(id = id, nombre = nombre))
+                repo.actualizar(id, TipoProducto(id = id, nombre = nombre))
                     .onSuccess { actualizada ->
-                        val actual = _regiones.value.toMutableList()
+                        val actual = _tipoProducto.value.toMutableList()
                         val idx = actual.indexOfFirst { it.id == id }
                         if (idx >= 0) actual[idx] = actualizada
-                        _regiones.value = actual
+                        _tipoProducto.value = actual
                         _error.value = null
                     }
                     .onFailure { e ->
@@ -109,7 +109,7 @@ class RegionView(
         }
     }
 
-    fun eliminarRegion(id: Int) {
+    fun eliminarTipoProducto(id: Int) {
         viewModelScope.launch {
             if (id <= 0) {
                 _error.value = "ID inválido para eliminar"
@@ -119,7 +119,7 @@ class RegionView(
             try {
                 repo.eliminar(id)
                     .onSuccess {
-                        _regiones.value = _regiones.value.filterNot { it.id == id }
+                        _tipoProducto.value = _tipoProducto.value.filterNot { it.id == id }
                         _error.value = null
                     }
                     .onFailure { e ->
