@@ -1,20 +1,20 @@
 
-package com.example.evaluacion2.viewmodel.region
+package com.example.evaluacion2.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.evaluacion2.Data.Modelo.Region
-import com.example.evaluacion2.repositorio.RegionRepositorio
+import com.example.evaluacion2.Data.Modelo.MetodoEnvio
+import com.example.evaluacion2.repositorio.MetodoEnvioRepositorio
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class RegionViewModel(
-    private val repo: RegionRepositorio = RegionRepositorio()
+class MetodoEnvioView(
+    private val repo: MetodoEnvioRepositorio = MetodoEnvioRepositorio()
 ) : ViewModel() {
 
-    private val _regiones = MutableStateFlow<List<Region>>(emptyList())
-    val regiones: StateFlow<List<Region>> = _regiones
+    private val _metodos = MutableStateFlow<List<MetodoEnvio>>(emptyList())
+    val metodos: StateFlow<List<MetodoEnvio>> = _metodos
 
     private val _cargando = MutableStateFlow(false)
     val cargando: StateFlow<Boolean> = _cargando
@@ -22,17 +22,18 @@ class RegionViewModel(
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
 
-    fun cargarRegiones() {
+    // Listar
+    fun cargarMetodos() {
         viewModelScope.launch {
             _cargando.value = true
             try {
                 repo.listar()
                     .onSuccess { lista ->
-                        _regiones.value = lista
+                        _metodos.value = lista
                         _error.value = null
                     }
                     .onFailure { e ->
-                        _error.value = e.message ?: "No se pudieron cargar las regiones"
+                        _error.value = e.message ?: "No se pudieron cargar los métodos de envío"
                     }
             } finally {
                 _cargando.value = false
@@ -40,39 +41,39 @@ class RegionViewModel(
         }
     }
 
-    fun obtenerRegion(id: Int, onResult: (Region?) -> Unit) {
+    // Obtener (opcional)
+    fun obtenerMetodo(id: Int, onResult: (MetodoEnvio?) -> Unit) {
         viewModelScope.launch {
             if (id <= 0) {
-                _error.value = "ID inválido para obtener región"
+                _error.value = "ID inválido para obtener método de envío"
                 onResult(null)
                 return@launch
             }
             repo.obtener(id)
-                .onSuccess { region -> onResult(region) }
+                .onSuccess { metodo -> onResult(metodo) }
                 .onFailure { e ->
-                    _error.value = e.message ?: "Error al obtener región"
+                    _error.value = e.message ?: "Error al obtener método de envío"
                     onResult(null)
                 }
         }
     }
 
-    fun crearRegion(nombre: String) {
+    // Crear
+    fun crearMetodo(metodoEnvio: String) {
         viewModelScope.launch {
-            if (nombre.isBlank()) {
-                _error.value = "El nombre de la región es obligatorio"
+            if (metodoEnvio.isBlank()) {
+                _error.value = "El nombre del método de envío es obligatorio"
                 return@launch
             }
             _cargando.value = true
             try {
-                repo.crear(Region(nombre = nombre))
-                    .onSuccess { creada ->
-                        val actual = _regiones.value.toMutableList()
-                        actual.add(creada)
-                        _regiones.value = actual
+                repo.crear(MetodoEnvio(metodoEnvio = metodoEnvio))
+                    .onSuccess { creado ->
+                        _metodos.value = _metodos.value + creado
                         _error.value = null
                     }
                     .onFailure { e ->
-                        _error.value = e.message ?: "Error al crear región"
+                        _error.value = e.message ?: "Error al crear método de envío"
                     }
             } finally {
                 _cargando.value = false
@@ -80,28 +81,29 @@ class RegionViewModel(
         }
     }
 
-    fun actualizarRegion(id: Int, nombre: String) {
+    // Actualizar
+    fun actualizarMetodo(id: Int, metodoEnvio: String) {
         viewModelScope.launch {
             if (id <= 0) {
                 _error.value = "ID inválido para actualizar"
                 return@launch
             }
-            if (nombre.isBlank()) {
-                _error.value = "El nombre de la región es obligatorio"
+            if (metodoEnvio.isBlank()) {
+                _error.value = "El nombre del método de envío es obligatorio"
                 return@launch
             }
             _cargando.value = true
             try {
-                repo.actualizar(id, Region(id = id, nombre = nombre))
-                    .onSuccess { actualizada ->
-                        val actual = _regiones.value.toMutableList()
-                        val idx = actual.indexOfFirst { it.id == id }
-                        if (idx >= 0) actual[idx] = actualizada
-                        _regiones.value = actual
+                repo.actualizar(id, MetodoEnvio(id = id, metodoEnvio = metodoEnvio))
+                    .onSuccess { actualizado ->
+                        val lista = _metodos.value.toMutableList()
+                        val idx = lista.indexOfFirst { it.id == id }
+                        if (idx >= 0) lista[idx] = actualizado
+                        _metodos.value = lista
                         _error.value = null
                     }
                     .onFailure { e ->
-                        _error.value = e.message ?: "Error al actualizar región"
+                        _error.value = e.message ?: "Error al actualizar método de envío"
                     }
             } finally {
                 _cargando.value = false
@@ -109,7 +111,8 @@ class RegionViewModel(
         }
     }
 
-    fun eliminarRegion(id: Int) {
+    // Eliminar
+    fun eliminarMetodo(id: Int) {
         viewModelScope.launch {
             if (id <= 0) {
                 _error.value = "ID inválido para eliminar"
@@ -119,11 +122,11 @@ class RegionViewModel(
             try {
                 repo.eliminar(id)
                     .onSuccess {
-                        _regiones.value = _regiones.value.filterNot { it.id == id }
+                        _metodos.value = _metodos.value.filterNot { it.id == id }
                         _error.value = null
                     }
                     .onFailure { e ->
-                        _error.value = e.message ?: "Error al eliminar región"
+                        _error.value = e.message ?: "Error al eliminar método de envío"
                     }
             } finally {
                 _cargando.value = false
