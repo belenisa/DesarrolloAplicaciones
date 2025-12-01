@@ -10,6 +10,7 @@ import com.example.evaluacion2.Data.network.RegionService
 import com.example.evaluacion2.Data.network.Rol.EstadoVentaService
 import com.example.evaluacion2.Data.network.Rol.RolService
 import com.example.evaluacion2.Data.network.Rol.VentaServive
+import com.example.evaluacion2.Data.network.TipoProductoService
 import com.example.evaluacion2.Data.network.UsuariosService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -47,4 +48,6 @@ object ApiNet {
     val comunaService: ComunaService = retrofit.create(ComunaService::class.java)
     val artistasService: ArtistasService = retrofit.create(ArtistasService::class.java)
     val artistaService: ArtistaService = retrofit.create(ArtistaService::class.java)
+
+    val tipoProductoService: TipoProductoService = retrofit.create(TipoProductoService::class.java)
 }
