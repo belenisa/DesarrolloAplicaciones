@@ -16,24 +16,39 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.evaluacion2.Modelo.Usuarios
-import com.example.evaluacion2.repositorio.UsuarioRepositorio
+import com.example.evaluacion2.viewmodel.Usuarios.UsuarioView
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Login(
-    listaUsuarios: ListaUsuarios, // ✅ lista global
     onLogingClick: (Usuarios) -> Unit,
     onLogout: () -> Unit,
     navController: NavController,
     tipoUsuarioActual: String?,
     nombreUsuarioActual: String?,
     setNombreUsuarioActual: (String?) -> Unit,
-    setTipoUsuarioActual: (String?) -> Unit
+    setTipoUsuarioActual: (String?) -> Unit,
+    viewModel: UsuarioView = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     var nombre by rememberSaveable { mutableStateOf("") }
-    var contrasena by remember { mutableStateOf("") }
-    var error by remember { mutableStateOf(false) }
+    var contrasena by rememberSaveable { mutableStateOf("") }
+
+    val error by viewModel.error.collectAsState()
+    val usuarioActual by viewModel.usuarioActual.collectAsState()
+    val cargando by viewModel.cargando.collectAsState()
+
+    // Navegación y set de estados globales cuando se autentica
+    LaunchedEffect(usuarioActual) {
+        usuarioActual?.let { user ->
+            onLogingClick(user)
+            setNombreUsuarioActual(user.nombre)
+            setTipoUsuarioActual(user.rol?.rol?.name ?: "CLIENTE")
+            navController.navigate("main") {
+                popUpTo("login") { inclusive = true }
+            }
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Box(
@@ -74,22 +89,16 @@ fun Login(
             IngresarUsuario(
                 nombre = nombre,
                 contrasena = contrasena,
-                usuarios = listaUsuarios.obtenerUsuarios(), // ✅ usa lista global
-                onLogingClick = {
-                    onLogingClick(it)
-                    setNombreUsuarioActual(it.nombre) // ✅ propiedad correcta
-                    setTipoUsuarioActual(it.rol?.rol?.name ?: "CLIENTE") // ✅ rol seguro
-                    navController.navigate("main") {
-                        popUpTo("login") { inclusive = true }
-                    }
-                },
-                onError = { error = true }
+                cargando = cargando,
+                onIngresar = {
+                    viewModel.login(nombre, contrasena)
+                }
             )
         }
 
-        if (error) {
+        error?.let {
             Text(
-                text = "Usuario o contraseña incorrectos",
+                text = it,
                 color = Color.Red,
                 fontSize = 14.sp,
                 modifier = Modifier.padding(top = 8.dp)
@@ -101,6 +110,7 @@ fun Login(
         }
     }
 }
+
 
 @Composable
 fun Titulo() {
@@ -192,37 +202,26 @@ fun Registro(navController: NavController) {
     )
 }
 
+
 @Composable
 fun IngresarUsuario(
     nombre: String,
     contrasena: String,
-    usuarios: List<Usuarios>,
-    onLogingClick: (Usuarios) -> Unit,
-    onError: () -> Unit
+    cargando: Boolean,
+    onIngresar: () -> Unit
 ) {
     Button(
-        onClick = {
-            val usuario = usuarios.find {
-                it.nombre.equals(nombre.trim(), ignoreCase = true) &&
-                        (it.contrasena ?: "") == contrasena
-            }
-            if (usuario != null) {
-                onLogingClick(usuario)
-            } else {
-                onError()
-            }
-        },
+        onClick = { onIngresar() },
+        enabled = !cargando && nombre.isNotBlank() && contrasena.isNotBlank(),
         colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
         modifier = Modifier
             .fillMaxWidth(0.8f)
             .padding(horizontal = 8.dp, vertical = 5.dp)
     ) {
-        Text(
-            text = "Ingresar",
-            color = Color(0xFFFFFD04)
-        )
+        Text(text = if (cargando) "Ingresando..." else "Ingresar", color = Color(0xFFFFFD04))
     }
 }
+
 
 @Composable
 fun SalirUsuario(navController: NavController, onLogout: () -> Unit) {

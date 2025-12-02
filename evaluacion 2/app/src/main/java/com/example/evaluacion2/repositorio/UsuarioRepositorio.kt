@@ -30,6 +30,7 @@ class UsuarioRepositorio(
     suspend fun listar(): Result<List<Usuarios>> =
         runCatching { service.listar().unwrap() }
 
+
     suspend fun obtener(id: Int): Result<Usuarios> =
         runCatching { service.obtener(id).unwrap() }
 

@@ -112,4 +112,35 @@ class UsuarioView(
                 }
         }
     }
+
+
+    private val _usuarioActual = MutableStateFlow<Usuarios?>(null)
+    val usuarioActual: StateFlow<Usuarios?> = _usuarioActual
+
+    fun login(nombre: String, contrasena: String) {
+        viewModelScope.launch {
+            _cargando.value = true
+            try {
+                repo.listar()
+                    .onSuccess { lista ->
+                        val encontrado = lista.find {
+                            it.nombre.equals(nombre.trim(), ignoreCase = true) &&
+                                    (it.contrasena ?: "") == contrasena
+                        }
+                        if (encontrado != null) {
+                            _usuarioActual.value = encontrado
+                            _error.value = null
+                        } else {
+                            _error.value = "Usuario o contraseña incorrectos"
+                        }
+                    }
+                    .onFailure { e ->
+                        _error.value = e.message ?: "Error al cargar usuarios"
+                    }
+            } finally {
+                _cargando.value = false
+            }
+        }
+    }
+
 }
