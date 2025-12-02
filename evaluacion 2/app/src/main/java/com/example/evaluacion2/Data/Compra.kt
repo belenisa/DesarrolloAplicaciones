@@ -10,15 +10,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.evaluacion2.Modelo.CD
+import com.example.evaluacion2.Data.Modelo.Producto
 import com.example.evaluacion2.Modelo.GuardarCompras
 
+
 @Composable
-fun Comprar(cd: CD, guardarCompras: GuardarCompras) {
+fun Comprar(producto: Producto, guardarCompras: GuardarCompras) {
     Column(modifier = Modifier.padding(16.dp)) {
         Button(
             onClick = {
-                guardarCompras.agregar(cd)
+                guardarCompras.agregarProducto(producto)
             },
             modifier = Modifier.align(Alignment.CenterHorizontally),
             colors = ButtonDefaults.buttonColors(

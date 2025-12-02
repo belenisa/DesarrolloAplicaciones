@@ -1,114 +1,108 @@
-package com.example.evaluacion2.ui.Pantalla
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
-import com.example.evaluacion2.Modelo.CD
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
-import com.example.evaluacion2.R
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.flatMapLatest
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
+import com.example.evaluacion2.Data.Modelo.Producto
+import com.example.evaluacion2.viewmodel.ProductoView
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun VerFormularioCD(
+    viewModel: ProductoView,
+    productoActual: Producto? = null,
+    tipoUsuarioActual: String?, // ✅ Nuevo parámetro para validar rol
+    onVolver: () -> Unit
+) {
+    // ✅ Validación de acceso
+    if (tipoUsuarioActual != "ADMIN") {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = "Acceso denegado",
+                style = MaterialTheme.typography.titleLarge,
+                color = Color.Red
+            )
+            Spacer(Modifier.height(8.dp))
+            Text("Solo administradores pueden crear o editar productos.")
+            Spacer(Modifier.height(16.dp))
+            Button(onClick = onVolver) {
+                Text("Volver")
+            }
+        }
+        return
+    }
 
-class VerFormularioCD(private val dao: CDsDao) : ViewModel() {
+    var nombre by remember { mutableStateOf(productoActual?.nombre ?: "") }
+    var descripcion by remember { mutableStateOf(productoActual?.descripcion ?: "") }
+    var precio by remember { mutableStateOf(productoActual?.precio?.toString() ?: "") }
+    var stock by remember { mutableStateOf(productoActual?.stock?.toString() ?: "") }
+    var imagenUrl by remember {
+        mutableStateOf(productoActual?.id?.let { "https://ragemusicbackend.onrender.com/api/imagenes/$it" } ?: "")
+    }
 
-    val productos = dao.getAll()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = emptyList()
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+            text = if (productoActual == null) "Crear Producto" else "Editar Producto",
+            style = MaterialTheme.typography.titleLarge,
+            color = Color.Yellow
         )
-    val primerosTresCDs: StateFlow<List<CD>> = dao.getPrimerosTresCDs()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        Spacer(Modifier.height(16.dp))
 
-
-    private val _query = MutableStateFlow("")
-    val resultadosBusqueda: StateFlow<List<CD>> = _query
-        .debounce(300) // espera 300ms antes de buscar
-        .flatMapLatest { query ->
-            dao.buscarProductos(query)
+        if (imagenUrl.isNotBlank()) {
+            val painter = rememberAsyncImagePainter(model = imagenUrl)
+            Image(
+                painter = painter,
+                contentDescription = nombre,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(180.dp)
+                    .border(2.dp, Color.Yellow, shape = RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+            Spacer(Modifier.height(8.dp))
         }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList()
-        )
 
+        OutlinedTextField(value = nombre, onValueChange = { nombre = it }, label = { Text("Nombre") })
+        Spacer(Modifier.height(8.dp))
+        OutlinedTextField(value = descripcion, onValueChange = { descripcion = it }, label = { Text("Descripción") })
+        Spacer(Modifier.height(8.dp))
+        OutlinedTextField(value = precio, onValueChange = { precio = it }, label = { Text("Precio") })
+        Spacer(Modifier.height(8.dp))
+        OutlinedTextField(value = stock, onValueChange = { stock = it }, label = { Text("Stock") })
+        Spacer(Modifier.height(8.dp))
+        OutlinedTextField(value = imagenUrl, onValueChange = { imagenUrl = it }, label = { Text("URL Imagen") })
 
-    init {
-        viewModelScope.launch {
-            dao.clear() // Limpia la tabla
-            insertarCatalogoInicial() // Inserta los datos iniciales
+        Spacer(Modifier.height(16.dp))
+
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(onClick = {
+                val precioDouble = precio.toDoubleOrNull() ?: 0.0
+                val stockInt = stock.toIntOrNull() ?: 0
+
+                if (nombre.isBlank() || descripcion.isBlank()) {
+                    return@Button
+                }
+
+                if (productoActual == null) {
+                    viewModel.crearProducto(nombre, descripcion, precioDouble, stockInt)
+                } else {
+                    viewModel.actualizarProducto(productoActual.id ?: 0, nombre, descripcion, precioDouble, stockInt)
+                }
+                onVolver()
+            }, colors = ButtonDefaults.buttonColors(containerColor = Color.Yellow)) {
+                Text("Guardar", color = Color.Black)
+            }
+
+            Button(onClick = onVolver) {
+                Text("Cancelar")
+            }
         }
-    }
-
-    fun agregarCD(
-        autor: String,
-        titulo: String,
-        precio: Int,
-        anio: Int,
-        genero: String,
-        imagenUri: String?,
-        imagenResId: Int? = null
-    ) {
-        val nuevoCD = CD(
-            autor = autor.trim(),
-            anio = anio,
-            titulo = titulo.trim(),
-            genero = genero,
-            precio = precio,
-            imagenResId = imagenResId,
-            imagenUri = imagenUri
-        )
-
-        viewModelScope.launch {
-            dao.upsert(nuevoCD)
-        }
-    }
-
-    fun limpiar() {
-        viewModelScope.launch {
-            dao.clear()
-        }
-    }
-
-    fun eliminarCD(cd: CD) {
-        viewModelScope.launch {
-            dao.eliminarCD(cd)
-        }
-    }
-
-
-    fun insertarCatalogoInicial() {
-        val cdsIniciales = listOf(
-            CD(1, "The Cure", 1982, "Pornography", "Rock", 12990, R.drawable.cure, null),
-            CD(2, "Daft Punk", 2001, "Discovery", "Electrónica", 14990, R.drawable.daftpunk, null),
-            CD(3, "The Doors", 1967, "Strange Days", "Rock", 10990, R.drawable.doors, null),
-            CD(4, "Kids See Ghosts", 2018, "Kids See Ghosts", "Hip-hop", 14990, R.drawable.ksg, null),
-            CD(5, "Low Roar", 2017, "Once in a Long, Long While", "Rock", 10990, R.drawable.lowroar, null),
-            CD(6, "Depeche Mode", 1990, "Violator", "Rock", 13990, R.drawable.violator, null)
-        )
-
-        viewModelScope.launch {
-            dao.insertarVarios(cdsIniciales)
-        }
-    }
-
-    fun actualizarBusqueda(nuevoTexto: String) {
-        _query.value = nuevoTexto
-    }
-
-
-}
-
-class VerFormularioCDFactory(private val dao: CDsDao) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(VerFormularioCD::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return VerFormularioCD(dao) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
-

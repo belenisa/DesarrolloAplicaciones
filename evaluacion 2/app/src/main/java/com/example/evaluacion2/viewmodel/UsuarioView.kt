@@ -52,7 +52,7 @@ class UsuarioView(
             val nuevo = Usuarios(
                 nombre = nombre,
                 correo = correo,
-                Contrasena = contrasena,
+                contrasena = contrasena,
                 rol = Rol(id = null, rol = rol)
             )
 

@@ -111,9 +111,9 @@ fun VerCarrito(guardarCompras: GuardarCompras) {
             onClick = {
                 // Aquí irá la lógica para finalizar compra
             },
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Yellow)
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
         ) {
-            Text("Finalizar compra", color = Color.Black)
+            Text("Finalizar compra", color = Color.Yellow)
         }
     }
 }

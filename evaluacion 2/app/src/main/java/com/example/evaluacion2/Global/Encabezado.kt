@@ -27,19 +27,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.evaluacion2.R
 import androidx.navigation.NavController
-import com.example.evaluacion2.ui.Pantalla.VerFormularioCD
+import com.example.evaluacion2.viewmodel.ProductoView
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 fun Encabezado(
     navController: NavController,
-    viewModel: VerFormularioCD,
+    viewModel: ProductoView,
     scrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
     content: @Composable () -> Unit = {}
 ) {
@@ -59,7 +57,7 @@ fun Encabezado(
             Buscar(viewModel = viewModel, navController = navController)
 
             Button(
-                onClick = {navController.navigate("login") },
+                onClick = { navController.navigate("login") },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Black,
                     contentColor = Color.Yellow
@@ -83,22 +81,25 @@ fun Encabezado(
 }
 
 
-
 @Composable
-fun Buscar(viewModel: VerFormularioCD, navController: NavController) {
-    val resultados by viewModel.resultadosBusqueda.collectAsState()
+fun Buscar(viewModel: ProductoView, navController: NavController) {
+    val productos by viewModel.productos.collectAsState()
     var texto by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
+
+    val resultados = productos.filter {
+        it.nombre.contains(texto, ignoreCase = true) ||
+                it.descripcion.contains(texto, ignoreCase = true)
+    }
 
     Column {
         OutlinedTextField(
             value = texto,
             onValueChange = {
                 texto = it
-                viewModel.actualizarBusqueda(it)
                 expanded = texto.isNotEmpty() && resultados.isNotEmpty()
             },
-            label = { Text("Buscar CD") },
+            label = { Text("Buscar producto") },
             singleLine = true,
             modifier = Modifier
                 .width(250.dp)
@@ -122,23 +123,24 @@ fun Buscar(viewModel: VerFormularioCD, navController: NavController) {
                 .width(250.dp)
                 .background(Color.Black)
         ) {
-            resultados.forEach { cd ->
+            resultados.forEach { producto ->
                 DropdownMenuItem(
                     text = {
                         Column {
-                            Text(cd.titulo, color = Color.Yellow, fontWeight = FontWeight.Bold)
-                            Text(cd.autor, color = Color.Gray)
+                            Text(producto.nombre, color = Color.Yellow, fontWeight = FontWeight.Bold)
+                            Text("$${producto.precio}", color = Color.Gray)
                         }
                     },
                     onClick = {
                         expanded = false
-                        navController.navigate("detalle/${cd.titulo}")
+                        navController.navigate("detalle/${producto.id}")
                     }
                 )
             }
         }
     }
 }
+
 
 
 

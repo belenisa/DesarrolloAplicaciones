@@ -1,27 +1,11 @@
-package com.example.evaluacion2.ui.Pantalla
 
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,16 +15,14 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.evaluacion2.Data.ListaUsuarios
 import com.example.evaluacion2.Modelo.Usuarios
-
-
+import com.example.evaluacion2.repositorio.UsuarioRepositorio
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Login(
-    listaUsuarios: ListaUsuarios, // ✅ agregado
+    listaUsuarios: ListaUsuarios, // ✅ lista global
     onLogingClick: (Usuarios) -> Unit,
     onLogout: () -> Unit,
     navController: NavController,
@@ -92,10 +74,11 @@ fun Login(
             IngresarUsuario(
                 nombre = nombre,
                 contrasena = contrasena,
-                usuarios = listaUsuarios.obtenerUsuarios(), // ✅ usa la lista global
+                usuarios = listaUsuarios.obtenerUsuarios(), // ✅ usa lista global
                 onLogingClick = {
                     onLogingClick(it)
-                    setNombreUsuarioActual(it.Usuario)
+                    setNombreUsuarioActual(it.nombre) // ✅ propiedad correcta
+                    setTipoUsuarioActual(it.rol?.rol?.name ?: "CLIENTE") // ✅ rol seguro
                     navController.navigate("main") {
                         popUpTo("login") { inclusive = true }
                     }
@@ -112,13 +95,12 @@ fun Login(
                 modifier = Modifier.padding(top = 8.dp)
             )
         }
+
         if (tipoUsuarioActual == null || tipoUsuarioActual != "Cliente") {
             Registro(navController)
         }
     }
 }
-
-
 
 @Composable
 fun Titulo() {
@@ -129,7 +111,6 @@ fun Titulo() {
         fontSize = 24.sp
     )
 }
-
 
 @Composable
 fun NombreUsuario(
@@ -147,8 +128,7 @@ fun NombreUsuario(
                 color = Color.Black,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
+                modifier = Modifier.padding(horizontal = 8.dp)
             )
         }
     } else {
@@ -193,11 +173,10 @@ fun Contrasena(contrasena: String, onContrasenaChange: (String) -> Unit) {
             focusedLabelColor = Color.Black,
             cursorColor = Color.Black,
             focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent
         )
     )
 }
-
 
 @Composable
 fun Registro(navController: NavController) {
@@ -213,8 +192,6 @@ fun Registro(navController: NavController) {
     )
 }
 
-
-
 @Composable
 fun IngresarUsuario(
     nombre: String,
@@ -225,7 +202,10 @@ fun IngresarUsuario(
 ) {
     Button(
         onClick = {
-            val usuario = usuarios.find { it.Usuario == nombre && it.Contraseña == contrasena }
+            val usuario = usuarios.find {
+                it.nombre.equals(nombre.trim(), ignoreCase = true) &&
+                        (it.contrasena ?: "") == contrasena
+            }
             if (usuario != null) {
                 onLogingClick(usuario)
             } else {
@@ -245,7 +225,7 @@ fun IngresarUsuario(
 }
 
 @Composable
-fun SalirUsuario(navController: NavController, onLogout: () -> Unit){
+fun SalirUsuario(navController: NavController, onLogout: () -> Unit) {
     Text(
         text = "Salir",
         color = Color(0xFF000000),
@@ -259,3 +239,4 @@ fun SalirUsuario(navController: NavController, onLogout: () -> Unit){
         }
     )
 }
+

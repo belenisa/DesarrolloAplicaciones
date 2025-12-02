@@ -39,12 +39,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.evaluacion2.Data.Modelo.Rol
+import com.example.evaluacion2.Data.Modelo.RolOpc
 import com.example.evaluacion2.viewmodel.Usuarios.UsuarioView
 import  kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AgregarUsuarioScreen(
+fun AgregarUsuario(
     navController: NavController,
     vm: UsuarioView = androidx.lifecycle.viewmodel.compose.viewModel() // o hiltViewModel()
 ) {
@@ -54,7 +55,7 @@ fun AgregarUsuarioScreen(
     var nombre by remember { mutableStateOf("") }
     var correo by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
-    var rolSeleccionado by remember { mutableStateOf<Rol?>(null) }
+    var rolSeleccionado by remember { mutableStateOf<RolOpc?>(null) } // ✅ ENUM
     var rolExpanded by remember { mutableStateOf(false) }
 
     val correoValido = android.util.Patterns.EMAIL_ADDRESS.matcher(correo).matches()
@@ -137,7 +138,7 @@ fun AgregarUsuarioScreen(
                         vm.crearUsuario(
                             nombre = nombre.trim(),
                             correo = correo.trim(),
-                            Contrasena = contrasena,
+                            contrasena = contrasena,
                             rol = rolSeleccionado!!
                         )
                         pendingNavigate = true
@@ -169,15 +170,17 @@ fun AgregarUsuarioScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
+
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ExposedRoleDropdown(
-    selected: Rol?,
-    onSelected: (Rol) -> Unit,
+    selected: RolOpc?,
+    onSelected: (RolOpc) -> Unit,
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit
 ) {
-    val roles = Rol.values().toList()
+    val roles = RolOpc.values().toList() // ✅ usamos el enum RolOpc
 
     ExposedDropdownMenuBox(
         expanded = expanded,

@@ -22,11 +22,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.evaluacion2.Data.Modelo.Producto
 import com.example.evaluacion2.R
-import com.example.evaluacion2.viewmodel.ProductoViewModel
+import com.example.evaluacion2.viewmodel.ProductoView
 import kotlinx.coroutines.delay
 
 @Composable
-fun Main(viewModel: ProductoViewModel, navController: NavController) {
+fun Main(viewModel: ProductoView, navController: NavController) {
     val productos by viewModel.productos.collectAsState()
 
     Logo()

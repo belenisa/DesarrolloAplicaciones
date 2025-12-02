@@ -41,20 +41,26 @@ import java.text.DecimalFormat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PantallaProductos(vm: ProductoView) {
+fun PantallaProductos(
+    viewModel: ProductoView,
+    onProductoClick: (com.example.evaluacion2.Data.Modelo.Producto) -> Unit,
+    guardarCompras: com.example.evaluacion2.Modelo.GuardarCompras,
+    navController: androidx.navigation.NavController,
+    tipoUsuarioActual: String?
+) {
     var nombre by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
     var precio by remember { mutableStateOf("") }
     var stock by remember { mutableStateOf("") }
 
-    val productos by vm.productos.collectAsState()
-    val cargando by vm.cargando.collectAsState()
-    val error by vm.error.collectAsState()
+    val productos by viewModel.productos.collectAsState()
+    val cargando by viewModel.cargando.collectAsState()
+    val error by viewModel.error.collectAsState()
 
     val df = remember { DecimalFormat("#,##0.##") }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Gestión de Productos") }) }
+        topBar = { TopAppBar(title = { Text("Productos") }) }
     ) { padding ->
         LazyColumn(
             modifier = Modifier
@@ -71,37 +77,43 @@ fun PantallaProductos(vm: ProductoView) {
                     Text("Error: $err", color = MaterialTheme.colorScheme.error)
                 }
 
-                OutlinedTextField(value = nombre, onValueChange = { nombre = it }, label = { Text("Nombre") })
-                OutlinedTextField(value = descripcion, onValueChange = { descripcion = it }, label = { Text("Descripción") })
-                OutlinedTextField(
-                    value = precio,
-                    onValueChange = { precio = it },
-                    label = { Text("Precio") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    singleLine = true
-                )
-                OutlinedTextField(
-                    value = stock,
-                    onValueChange = { stock = it },
-                    label = { Text("Stock") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    singleLine = true
-                )
+                // ✅ Mostrar formulario solo si es ADMIN
+                if (tipoUsuarioActual == "ADMIN") {
+                    Text("Gestión de Productos", style = MaterialTheme.typography.titleLarge)
+                    Spacer(Modifier.height(8.dp))
 
-                Button(onClick = {
-                    val precioNum = precio.toDoubleOrNull()
-                    val stockNum = stock.toIntOrNull()
-                    if (nombre.isNotBlank() && descripcion.isNotBlank() && precioNum != null && stockNum != null) {
-                        vm.crearProducto(nombre, descripcion, precioNum, stockNum)
-                        nombre = ""; descripcion = ""; precio = ""; stock = ""
+                    OutlinedTextField(value = nombre, onValueChange = { nombre = it }, label = { Text("Nombre") })
+                    OutlinedTextField(value = descripcion, onValueChange = { descripcion = it }, label = { Text("Descripción") })
+                    OutlinedTextField(
+                        value = precio,
+                        onValueChange = { precio = it },
+                        label = { Text("Precio") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        singleLine = true
+                    )
+                    OutlinedTextField(
+                        value = stock,
+                        onValueChange = { stock = it },
+                        label = { Text("Stock") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        singleLine = true
+                    )
+
+                    Button(onClick = {
+                        val precioNum = precio.toDoubleOrNull()
+                        val stockNum = stock.toIntOrNull()
+                        if (nombre.isNotBlank() && descripcion.isNotBlank() && precioNum != null && stockNum != null) {
+                            viewModel.crearProducto(nombre, descripcion, precioNum, stockNum)
+                            nombre = ""; descripcion = ""; precio = ""; stock = ""
+                        }
+                    }) {
+                        Text("Agregar Producto")
                     }
-                }) {
-                    Text("Agregar Producto")
+
+                    Button(onClick = { viewModel.cargarProductos() }) { Text("Recargar") }
+
+                    Divider()
                 }
-
-                Button(onClick = { vm.cargarProductos() }) { Text("Recargar") }
-
-                Divider()
             }
 
             items(productos) { producto ->
@@ -112,8 +124,20 @@ fun PantallaProductos(vm: ProductoView) {
                         Column {
                             Text("#${producto.id}")
                             Spacer(Modifier.height(4.dp))
-                            OutlinedButton(onClick = { producto.id?.let { vm.eliminarProducto(it) } }) {
-                                Text("Eliminar")
+
+                            if (tipoUsuarioActual == "ADMIN") {
+                                OutlinedButton(onClick = { producto.id?.let { viewModel.eliminarProducto(it) } }) {
+                                    Text("Eliminar")
+                                }
+                                Spacer(Modifier.height(4.dp))
+                            }
+
+                            Button(onClick = { onProductoClick(producto) }) {
+                                Text("Ver detalle")
+                            }
+                            Spacer(Modifier.height(4.dp))
+                            Button(onClick = { guardarCompras.agregarProducto(producto) }) {
+                                Text("Agregar al carrito")
                             }
                         }
                     }

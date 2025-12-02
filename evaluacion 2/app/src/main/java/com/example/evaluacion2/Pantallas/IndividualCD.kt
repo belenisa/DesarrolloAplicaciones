@@ -1,6 +1,5 @@
 package com.example.evaluacion2.ui.Pantalla
 
-import android.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,9 +9,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,19 +26,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
-import com.example.evaluacion2.Data.Comprar
-import com.example.evaluacion2.Global.QuitarCDs
-import com.example.evaluacion2.Modelo.CD
+import com.example.evaluacion2.Data.Modelo.Producto
 import com.example.evaluacion2.Modelo.GuardarCompras
+import com.example.evaluacion2.viewmodel.ProductoView
 
 
 @Composable
-fun IndividualCD(cd: CD, guardarCompras: GuardarCompras, viewModel: VerFormularioCD,tipoUsuarioActual: String?)
-{
+fun IndividualCD
+            (
+    producto: Producto,
+    guardarCompras: GuardarCompras,
+    viewModel: ProductoView,
+    tipoUsuarioActual: String?
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -41,16 +49,13 @@ fun IndividualCD(cd: CD, guardarCompras: GuardarCompras, viewModel: VerFormulari
         colors = CardDefaults.cardColors(containerColor = Color.Black)
     ) {
         Column {
-
-            val painter = when {
-                cd.imagenUri?.isNotBlank() == true -> rememberAsyncImagePainter(cd.imagenUri)
-                cd.imagenResId != null -> painterResource(id = cd.imagenResId)
-                else -> painterResource(id = R.drawable.ic_menu_gallery) // imagen por defecto
-            }
+            // Imagen desde backend usando id del producto
+            val imagenUrl = producto.id?.let { "https://ragemusicbackend.onrender.com/api/imagenes/$it" }
+            val painter = rememberAsyncImagePainter(model = imagenUrl)
 
             Image(
                 painter = painter,
-                contentDescription = cd.titulo,
+                contentDescription = producto.nombre,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(350.dp)
@@ -59,12 +64,20 @@ fun IndividualCD(cd: CD, guardarCompras: GuardarCompras, viewModel: VerFormulari
                 contentScale = ContentScale.Crop
             )
 
-            Text("Título: ${cd.titulo}", style = MaterialTheme.typography.titleLarge, color = Color.Yellow)
-            Text("Artista: ${cd.autor}", style = MaterialTheme.typography.bodyLarge, color = Color.Yellow)
-            Text("Año: ${cd.anio}", style = MaterialTheme.typography.bodyMedium, color = Color.Yellow)
-            Text("Género: ${cd.genero}", style = MaterialTheme.typography.bodyMedium, color = Color.Yellow)
-            Text("Precio: \$${cd.precio}", style = MaterialTheme.typography.bodyMedium, color = Color.Yellow)
+            // Información del producto
+            Text("Nombre: ${producto.nombre}", style = MaterialTheme.typography.titleLarge, color = Color.Yellow)
+            Text("Descripción: ${producto.descripcion}", style = MaterialTheme.typography.bodyLarge, color = Color.Yellow)
+            Text("Precio: \$${producto.precio}", style = MaterialTheme.typography.bodyMedium, color = Color.Yellow)
+            Text("Stock: ${producto.stock}", style = MaterialTheme.typography.bodyMedium, color = Color.Yellow)
 
+            producto.tipoProducto?.let {
+                Text("Tipo: ${it.nombre}", style = MaterialTheme.typography.bodyMedium, color = Color.Yellow)
+            }
+            producto.artistas?.artista?.let {
+                Text("Artista: ${it.nombre}", style = MaterialTheme.typography.bodyMedium, color = Color.Yellow)
+            }
+
+            // Botones
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -72,14 +85,26 @@ fun IndividualCD(cd: CD, guardarCompras: GuardarCompras, viewModel: VerFormulari
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Comprar(cd = cd, guardarCompras = guardarCompras)
-
-
-                if (tipoUsuarioActual == "Admin") {
-                    QuitarCDs(cd = cd, viewModel = viewModel, tipoUsuarioActual = tipoUsuarioActual)
+                // Botón comprar
+                Button(
+                    onClick = { guardarCompras.agregarProducto(producto) },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Yellow)
+                ) {
+                    Text("Comprar", color = Color.Black)
                 }
 
+                // Botón eliminar solo para Admin
+                if (tipoUsuarioActual == "ADMIN") {
+                    IconButton(onClick = { producto.id?.let(viewModel::eliminarProducto) }) {
+                        Icon(
+                            imageVector = Icons.Filled.Delete,
+                            contentDescription = "Eliminar",
+                            tint = Color.Yellow
+                        )
+                    }
+                }
             }
         }
     }
+
 }
